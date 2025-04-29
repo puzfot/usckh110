@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>★REBIRTH心理測驗★</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Myriad Hebrew', sans-serif;
+      background-color: #e0dddd;
+      padding: 2vw;
+      margin: 0;
+      background-image: url("image/BG.png");
+      background-size: cover;
+      background-repeat: repeat;
+      /*filter: grayscale(100%) contrast(1.1);*/
+    }
+    h1 {
+      color: #252426;
+      font-size: 6vw;
+      text-align: center;
+      margin-bottom: 6vw;
+    }
+    .question-box {
+      margin-bottom: 8vw;
+    }
+    h2 {
+      font-size: 5vw;
+      color: #252426;
+    }
+
+
+    .option-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 7 / 2; /* 建議比例大約 7:2，看起來最自然 */
+  margin: 1.5vw auto; /* 原本是 2vw，改小一點行距 */
+  background: none;
+  border: none;
+  font-size: 3vw;
+  font-weight: normal;
+  color: white;
+  text-align: center;
+  font-family: 'MS PGothic', sans-serif;
+  cursor: pointer;
+  z-index: 0;
+  padding: 0;
+}
+
+
+.option-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("image/btn.PNG") no-repeat center center;
+  background-size: contain;
+  z-index: -1;
+}
+
+
+.option-btn span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+    .result-card {
+      text-align: center;
+    }
+    .result-card img {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      display: block;
+      border-radius: 0;
+      border: none;
+    }
+    .result-title {
+      font-size: 6vw;
+      font-weight: bold;
+      margin-top: 4vw;
+      color: #111;
+      text-shadow: 1px 1px 0 #000;
+    }
+    .result-desc {
+      font-size: 3.5vw;
+      margin: 4vw 0;
+      color: #333;
+    }
+    .recommend-list {
+      background-color: #fff;
+      border: none;
+      border-radius: 0;
+      padding: 4vw;
+      margin: 6vw 0;
+      text-align: left;
+      box-shadow: inset 0 0 3px #aaa;
+    }
+    .recommend-list h3 {
+      font-size: 5vw;
+      margin-bottom: 3vw;
+      color: #111;
+    }
+    .recommend-list ul {
+      padding-left: 5vw;
+      font-size: 4.5vw;
+      color: #222;
+    }
+    .more-btn {
+      display: block;
+      margin: 0 auto;
+      margin-top: 5vw;
+      padding: 4vw 6vw;
+      background-color: #000;
+      color: white;
+      font-size: 4.5vw;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      text-align: center;
+    }
+    .character-images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4vw;
+      margin-top: 6vw;
+    }
+    .character-images img {
+      width: 50vw;
+      max-width: 1080px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>你是哪一隻REBIRTH小怪獸呢？</h1>
+  <div id="quiz-container"></div>
+  <div id="result" class="result-card"></div>
+  <div id="monster-overview" style="display:none;"></div>
+
+  <script>
+
+
+const resultsData = {
+  "刺激・驚悚": {
+    name: "Sleepy Monster",
+    img: "image/result_1.PNG",
+    overviewImg: "image/introduce_1.JPG",
+    desc: "超級外向的社交天才，到處交朋友，時常約陌生人玩遊戲...",
+    smallDesc: "＜...快點打開電燈好嗎？我有點怕黑啦！＞",
+    recommends: [ "#01 絕對武裝MK", "#02 閉目禮", "#09 舊贖", "#10 Silent Office", "#14 輪迴","#18 Stärke", "#19 Pekaboo"]
+  },
+  "夢幻・奇幻": {
+    name: "Imagine Monster",
+    img: "image/result_2.PNG",
+    overviewImg: "image/introduce_2.JPG",
+    desc: "常常用奇怪的比喻來解釋看到或聽聞的事物...",
+    smallDesc: "＜我真的好累，可以唸一點故事給我聽嗎？＞",
+    recommends: [ "#05 蘑物", "#11 岐命異途", "#12 時迴者", "#15 神諭", "#16 菲斯托斯", "#17 Lightmite"]
+  },
+  "溫暖・懷舊": {
+    name: "Bird Monster",
+    img: "image/result_3.PNG",
+    overviewImg: "image/introduce_3.JPG",
+    desc: "和朋友赴約永遠都會遲到，原因都是沒辦法從床上起來...",
+    smallDesc: "＜太舒服了...再讓我躺五分鐘...好嗎？＞",
+    recommends: ["#04 回・味 Re-live", "#06 逐魂救贖", "#20 時光舊夢", "#21 最後的告別"]
+  },
+  "多元・文化": {
+    name: "Curious Monster",
+    img: "image/result_4.PNG",
+    overviewImg: "image/introduce_4.JPG",
+    desc: "超級喜歡UFO文化，每天熬夜看Rebirth圖書館的書...",
+    smallDesc: "＜你相信外星人嗎？我有證據喔！＞",
+    recommends: ["#03 徘徊者的映象", "#07 尋色", "#08 勇闖馬頭山", "#13 宋江陣"]
+  }
+};
+
+
+
+    const questions = [
+  { question: "你最喜歡的小說類型是？", options: [
+    { text: "恐怖懸疑", type: "刺激・驚悚" },
+    { text: "奇幻冒險", type: "夢幻・奇幻" },
+    { text: "溫馨感人", type: "溫暖・懷舊" },
+    { text: "歷史與文化", type: "多元・文化" } ] },
+  { question: "如果你進入一個遊戲世界，你會選擇哪種角色？", options: [
+    { text: "獵人/偵探", type: "刺激・驚悚" },
+    { text: "施法者", type: "夢幻・奇幻" },
+    { text: "旅行者", type: "溫暖・懷舊" },
+    { text: "學者", type: "多元・文化" } ] },
+  { question: "你覺得哪種天氣最能代表你的個性？", options: [
+    { text: "雷雨交加", type: "刺激・驚悚" },
+    { text: "霧氣瀰漫", type: "夢幻・奇幻" },
+    { text: "晴朗微風", type: "溫暖・懷舊" },
+    { text: "陰晴變換", type: "多元・文化" } ] },
+  { question: "你最害怕的事情是？", options: [
+    { text: "身處黑暗", type: "刺激・驚悚" },
+    { text: "失去魔法", type: "夢幻・奇幻" },
+    { text: "遺忘回憶", type: "溫暖・懷舊" },
+    { text: "文化消失", type: "多元・文化" } ] },
+  { question: "如果你能擁有一種超能力，你會選擇？", options: [
+    { text: "預知未來", type: "刺激・驚悚" },
+    { text: "召喚元素", type: "夢幻・奇幻" },
+    { text: "時間倒轉", type: "溫暖・懷舊" },
+    { text: "語言天賦", type: "多元・文化" } ] },
+  { question: "你的夢想旅行地點是？", options: [
+    { text: "廢棄醫院", type: "刺激・驚悚" },
+    { text: "幻想國度", type: "夢幻・奇幻" },
+    { text: "童年小鎮", type: "溫暖・懷舊" },
+    { text: "古文明遺跡", type: "多元・文化" } ] },
+  { question: "你認為最重要的價值觀是？", options: [
+    { text: "勇氣與求生", type: "刺激・驚悚" },
+    { text: "想像力", type: "夢幻・奇幻" },
+    { text: "珍惜情感", type: "溫暖・懷舊" },
+    { text: "文化傳承", type: "多元・文化" } ] },
+  { question: "你最喜歡的音樂類型是？", options: [
+    { text: "低沉詭異配樂", type: "刺激・驚悚" },
+    { text: "夢幻神秘旋律", type: "夢幻・奇幻" },
+    { text: "舒緩懷舊旋律", type: "溫暖・懷舊" },
+    { text: "民族風格音樂", type: "多元・文化" } ] },
+  { question: "你遇到難題時，會怎麼做？", options: [
+    { text: "靠直覺", type: "刺激・驚悚" },
+    { text: "創意方法", type: "夢幻・奇幻" },
+    { text: "找回憶經驗", type: "溫暖・懷舊" },
+    { text: "研究文化", type: "多元・文化" } ] },
+  { question: "你在故事中最喜歡哪種角色？", options: [
+    { text: "內心陰暗角色", type: "刺激・驚悚" },
+    { text: "有神秘力量角色", type: "夢幻・奇幻" },
+    { text: "帶來溫暖角色", type: "溫暖・懷舊" },
+    { text: "異文化角色", type: "多元・文化" } ] },
+  { question: "你最想體驗哪種過去時代？", options: [
+    { text: "黑暗時期", type: "刺激・驚悚" },
+    { text: "奇幻時代", type: "夢幻・奇幻" },
+    { text: "復古年代", type: "溫暖・懷舊" },
+    { text: "古文明時期", type: "多元・文化" } ] },
+  { question: "你會選擇哪種座右銘？", options: [
+    { text: "真相藏於黑暗", type: "刺激・驚悚" },
+    { text: "奇蹟無所不在", type: "夢幻・奇幻" },
+    { text: "珍惜眼前人", type: "溫暖・懷舊" },
+    { text: "文化是靈魂的橋樑", type: "多元・文化" } ] }
+];
+
+
+    let currentQuestion = 0;
+    const answers = {};
+    const quizContainer = document.getElementById("quiz-container");
+    const resultContainer = document.getElementById("result");
+
+
+    function showQuestion() {
+  const q = questions[currentQuestion];
+  quizContainer.innerHTML = `
+    <div class="question-box">
+      <h2>Q${currentQuestion + 1}. ${q.question}</h2>
+      ${q.options.map(opt => `<button class="option-btn" onclick="selectAnswer('${opt.type}')"><span>${opt.text}</span></button>`).join('')}
+    </div>
+      `;
+    }
+
+
+    function selectAnswer(type) {
+      answers[type] = (answers[type] || 0) + 1;
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+
+    function showResult() {
+  quizContainer.innerHTML = "";
+  let maxType = Object.entries(answers).sort((a, b) => b[1] - a[1])[0][0];
+  const result = resultsData[maxType];
+
+
+  resultContainer.innerHTML = `
+    <div style="display: flex; flex-wrap: wrap; gap: 4vw; align-items: center; justify-content: center; text-align: left; margin-bottom: 6vw;">
+      <div style="flex: 1 1 40%; max-width: 300px;">
+        <img src="${result.img}" alt="${result.name}" style="width: 100%; ">
+      </div>
+      <div style="flex: 1 1 50%; max-width: 500px;">
+        <h2 style="font-size: 5vw; margin: 1vw 0;">${result.name}</h2>
+        <p style="font-size: 4vw; color: #111; margin-bottom: 2vw;">${result.smallDesc}</p>
+        <p style="font-size: 4vw; line-height: 1.6; color: #333;">${result.desc}</p>
+      </div>
+    </div>
+
+
+    <div class="recommend-list">
+      <h3 style="text-align: center; font-size: 5vw;">★ 小怪獸喜歡這個！ ★</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 3vw; justify-content: center;">
+        ${result.recommends.map(item => `
+          <div style="flex: 1 1 40%; max-width: 260px;">
+            <button class="option-btn"><span>${item}</span></button>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+
+   <button class="more-btn" onclick="showMonsterOverview()">認識更多的小怪獸！</button>
+
+
+    
+  `;
+ 
+}
+function showMonsterOverview() {
+  quizContainer.innerHTML = "";
+  resultContainer.innerHTML = "";
+
+  const monsterOverview = document.getElementById("monster-overview");
+  monsterOverview.style.display = "block";
+  monsterOverview.style.backgroundColor = "#000"; // 黑色背景
+  monsterOverview.style.padding = "5vw 3vw";
+  monsterOverview.style.minHeight = "100vh"; // 讓畫面撐滿高度
+
+  monsterOverview.innerHTML = `
+    <h2 style="text-align: center; font-size: 5vw; color: #fff; margin-bottom: 6vw;">★ 認識更多小怪獸 ★</h2>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6vw;">
+      ${Object.entries(resultsData).map(([type, data]) => `
+        <div style="flex: 0 1 40%; max-width: 300px; text-align: center;">
+          <div style="position: relative; cursor: pointer;" onclick="showResultFromType('${type}')">
+           <img src="${data.overviewImg}" alt="${data.name}" style="width: 100%; border: 2px solid #fff; margin-bottom: 2vw;">
+            <p style="font-size: 3.5vw; color: #eee; margin-top: 1vw;">${data.smallDesc}</p>
+          </div>
+          <button class="option-btn" style="margin-top: 3vw; color: #fff;" onclick="showResultFromType('${type}')">
+            <span>${data.name}</span>
+          </button>
+        </div>
+      `).join('')}
+    </div>
+    <button class="more-btn" style="margin-top: 8vw; background-color: #fff; color: #000;" onclick="restartQuiz()">再玩一次！</button>
+  `;
+}
+
+
+
+function showResultFromType(type) {
+  document.getElementById("monster-overview").style.display = "none";
+  const result = resultsData[type];
+  resultContainer.innerHTML = `
+    <div style="display: flex; flex-wrap: wrap; gap: 4vw; align-items: center; justify-content: center; text-align: left; margin-bottom: 6vw;">
+      <div style="flex: 1 1 40%; max-width: 300px;">
+        <img src="${result.img}" alt="${result.name}" style="width: 100%;">
+      </div>
+      <div style="flex: 1 1 50%; max-width: 500px;">
+        <h2 style="font-size: 5vw; margin: 1vw 0;">${result.name}</h2>
+        <p style="font-size: 4vw; color: #111; margin-bottom: 2vw;">${result.desc}</p>
+      </div>
+    </div>
+    <div class="recommend-list">
+      <h3 style="text-align: center; font-size: 5vw;">★ 小怪獸喜歡這個！ ★</h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 3vw; justify-content: center;">
+        ${result.recommends.map(item => `
+          <div style="flex: 1 1 40%; max-width: 260px;">
+            <button class="option-btn"><span>${item}</span></button>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <button class="more-btn" onclick="showMonsterOverview()">回到小怪獸選單</button>
+  `;
+}
+
+function restartQuiz() {
+  document.getElementById("monster-overview").style.display = "none";
+  resultContainer.innerHTML = "";
+  currentQuestion = 0;
+  for (let key in answers) delete answers[key];
+  showQuestion();
+}
+
+    showQuestion();
+  </script>
+</body>
+</html>

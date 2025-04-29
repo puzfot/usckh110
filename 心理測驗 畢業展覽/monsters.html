@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REBIRTH 小怪獸介紹</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'MS PGothic', sans-serif;
+      padding: 5vw;
+      margin: 0;
+      text-align: center;
+    }
+    h1 {
+      font-size: 7vw;
+      margin-bottom: 8vw;
+      letter-spacing: 2px;
+    }
+    .monster-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6vw;
+      justify-items: center;
+    }
+    .monster-card {
+      background-color: #111;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      padding: 4vw;
+      max-width: 300px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .monster-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px #fff;
+    }
+    .monster-card img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 3vw;
+      border: 2px solid #fff;
+      border-radius: 8px;
+    }
+    .monster-name {
+      font-size: 5vw;
+      margin: 2vw 0 1vw;
+      font-weight: bold;
+    }
+    .monster-quote {
+      font-size: 4vw;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>REBIRTH 小怪獸介紹</h1>
+
+  <div class="monster-grid">
+
+    <div class="monster-card">
+      <img src="image/sleepy.png" alt="Sleepy Monster">
+      <div class="monster-name">Sleepy Monster</div>
+      <div class="monster-quote">＜好睏好無聊...＞</div>
+    </div>
+
+    <div class="monster-card">
+      <img src="image/bird.png" alt="Bird Monster">
+      <div class="monster-name">Bird Monster</div>
+      <div class="monster-quote">＜欸？？我的鬧鐘呢？＞</div>
+    </div>
+
+    <div class="monster-card">
+      <img src="image/introduce_4.JPG" alt="Curious Monster">
+      <div class="monster-name">Curious Monster</div>
+      <div class="monster-quote">＜不知道UFOO存不存在...＞</div>
+    </div>
+
+    <div class="monster-card">
+      <img src="image/introduce_2.JPG" alt="Imagine Monster">
+      <div class="monster-name">Imagine Monster</div>
+      <div class="monster-quote">＜（舔）＞</div>
+    </div>
+
+  </div>
+
+</body>
+</html>
